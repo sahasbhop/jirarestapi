@@ -1,5 +1,5 @@
-jira.url: https://jira.easy2easiest.com
-jira.username: undefined
-jira.password: undefined
-jsessionid: EF9D9B7639A0769ADE58BDE26772BC72
-atlassian.xsrf.token: BBKQ-TCB0-40PI-EZJE|a4d0db10ccfeecfc7d3bf10bffd2bc8ddc2858b7|lin
+jiraUrl: https://jira.easy2easiest.com
+jiraUsername: undefined
+jiraPassword: undefined
+jSessionId: EF9D9B7639A0769ADE58BDE26772BC72
+atlassianXsrfToken: BBKQ-TCB0-40PI-EZJE|a4d0db10ccfeecfc7d3bf10bffd2bc8ddc2858b7|lin
