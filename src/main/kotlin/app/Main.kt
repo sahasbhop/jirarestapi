@@ -1,19 +1,27 @@
 package app
 
+import app.jira.session.usecase.LoginUseCase
 import app.jira.util.jiraDateTime
 import app.jira.worklog.model.WorkLog
-import app.jira.worklog.usecase.GetAuthorWorkLogs
+import app.jira.worklog.usecase.GetAuthorWorkLogsUseCase
+import app.util.resetTime
 import app.util.width
-import app.util.zeroHoursInBangkok
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 fun main(args: Array<String>) {
     val context = ApplicationContext.read("yml/application.yml")
     println(context)
 
-    GetAuthorWorkLogs(context).execute("2018-04-15".zeroHoursInBangkok())
+    val sinceDateTime = OffsetDateTime.now().minusDays(0).resetTime()
+    println("Query work log since: ${sinceDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
+
+    LoginUseCase(context).execute()
+            .flatMap { GetAuthorWorkLogsUseCase(context).execute(sinceDateTime) }
             .subscribe({
                 printAuthorAndWorkLog(it)
+            }, { error ->
+                println("onError - ${error.message}")
             })
 }
 

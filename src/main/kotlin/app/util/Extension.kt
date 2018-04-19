@@ -9,6 +9,8 @@ fun String.zeroHoursInBangkok(): OffsetDateTime {
     return OffsetDateTime.of(localDateTime, ZoneOffset.ofHours(7))
 }
 
+fun OffsetDateTime.resetTime() = this.withHour(0).withMinute(0).withSecond(0).withNano(0)
+
 /**
  * Append spaces as prefix to expand string length to a specified size
  */

@@ -6,7 +6,7 @@ import app.jira.worklog.repository.WorkLogRepository
 import io.reactivex.Observable
 import java.time.OffsetDateTime
 
-class GetAuthorWorkLogs(private val context: ApplicationContext) {
+class GetAuthorWorkLogsUseCase(private val context: ApplicationContext) {
 
     fun execute(sinceDateTime: OffsetDateTime): Observable<Map<String, List<WorkLog>>> {
         val workLogRepository = WorkLogRepository(context)

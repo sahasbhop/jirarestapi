@@ -15,12 +15,11 @@ class ReceivedCookiesInterceptor : Interceptor {
             val cookies = HashSet<String>()
 
             for (header in originalResponse.headers("Set-Cookie")) {
+                println("Set-Cookie: $header")
                 cookies.add(header)
             }
-
             Cookies.values = cookies
         }
-
         return originalResponse
     }
 }

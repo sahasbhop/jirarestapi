@@ -13,9 +13,7 @@ class AddCookiesInterceptor : Interceptor {
 
         for (cookie in cookies) {
             builder.addHeader("Cookie", cookie)
-            println("Adding cookie: $cookie")
         }
-
         return chain.proceed(builder.build())
     }
 }

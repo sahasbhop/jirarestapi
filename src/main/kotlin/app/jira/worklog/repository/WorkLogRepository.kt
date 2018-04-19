@@ -5,6 +5,7 @@ import app.jira.util.Ids
 import app.jira.worklog.model.UpdatedWorkLogList
 import app.jira.worklog.model.WorkLog
 import app.jira.worklog.service.WorkLogService
+import app.retrofit.service
 import io.reactivex.Observable
 import java.time.OffsetDateTime
 
