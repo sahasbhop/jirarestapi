@@ -1,9 +1,8 @@
 package app
 
-import app.jira.session.usecase.LoginUseCase
+import app.jira.search.usecase.SearchIssueUseCase
 import app.jira.util.jiraDateTime
 import app.jira.worklog.model.WorkLog
-import app.jira.worklog.usecase.GetAuthorWorkLogsUseCase
 import app.util.resetTime
 import app.util.width
 import java.time.OffsetDateTime
@@ -16,13 +15,25 @@ fun main(args: Array<String>) {
     val sinceDateTime = OffsetDateTime.now().minusDays(0).resetTime()
     println("Query work log since: ${sinceDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)}")
 
-    LoginUseCase(context).execute()
-            .flatMap { GetAuthorWorkLogsUseCase(context).execute(sinceDateTime) }
+    SearchIssueUseCase(context)
+            .execute("LBC", updatedFrom = sinceDateTime.toLocalDate())
             .subscribe({
-                printAuthorAndWorkLog(it)
+                it.forEach {
+                    val timestamp = it.fields.updated.jiraDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                    println("$timestamp ${it.key} ${it.fields.summary}")
+                }
             }, { error ->
                 println("onError - ${error.message}")
+                error.printStackTrace()
             })
+
+//    LoginUseCase(context).execute()
+//            .flatMap { GetAuthorWorkLogsUseCase(context).execute(sinceDateTime) }
+//            .subscribe({
+//                printAuthorAndWorkLog(it)
+//            }, { error ->
+//                println("onError - ${error.message}")
+//            })
 }
 
 private fun printAuthorAndWorkLog(authorWorkLogsMap: Map<String, List<WorkLog>>) {

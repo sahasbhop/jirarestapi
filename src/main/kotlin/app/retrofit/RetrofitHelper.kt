@@ -14,7 +14,7 @@ inline fun <reified T> ApplicationContext.service(): T {
     val httpLoggingInterceptor = HttpLoggingInterceptor({ message ->
         println(message)
     }).apply {
-        level = HttpLoggingInterceptor.Level.BASIC
+        level = HttpLoggingInterceptor.Level.BODY
     }
 
     val client = OkHttpClient.Builder()

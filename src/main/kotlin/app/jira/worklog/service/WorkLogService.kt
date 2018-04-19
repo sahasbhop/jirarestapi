@@ -12,7 +12,7 @@ import retrofit2.http.Query
 // Reference: https://developer.atlassian.com/cloud/jira/platform/rest/#api-api-2-worklog-list-post
 interface WorkLogService {
     @GET("rest/api/2/worklog/updated")
-    fun getIdsOfWorkLogs(@Query("since") modifiedSince: Long): Observable<UpdatedWorkLogList>
+    fun getIdsOfWorkLogsModified(@Query("since") since: Long): Observable<UpdatedWorkLogList>
 
     @POST("/rest/api/2/worklog/list")
     fun getWorkLogs(@Body ids: Ids): Observable<List<WorkLog>>

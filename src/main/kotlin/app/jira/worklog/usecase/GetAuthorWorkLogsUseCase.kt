@@ -11,7 +11,7 @@ class GetAuthorWorkLogsUseCase(private val context: ApplicationContext) {
     fun execute(sinceDateTime: OffsetDateTime): Observable<Map<String, List<WorkLog>>> {
         val workLogRepository = WorkLogRepository(context)
 
-        return workLogRepository.getIdsOfWorkLogs(sinceDateTime)
+        return workLogRepository.getIdsOfWorkLogsModified(sinceDateTime)
                 .map { it.values.map { it.worklogId.toInt() } }
                 .flatMap { workLogRepository.getWorkLogs(it.toIntArray()) }
                 .map {

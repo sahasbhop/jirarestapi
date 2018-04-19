@@ -11,9 +11,9 @@ import java.time.OffsetDateTime
 
 class WorkLogRepository(private val context: ApplicationContext) {
 
-    fun getIdsOfWorkLogs(sinceDateTime: OffsetDateTime): Observable<UpdatedWorkLogList> {
-        val unixTime = sinceDateTime.toInstant().toEpochMilli()
-        return context.service<WorkLogService>().getIdsOfWorkLogs(unixTime)
+    fun getIdsOfWorkLogsModified(since: OffsetDateTime): Observable<UpdatedWorkLogList> {
+        val unixTime = since.toInstant().toEpochMilli()
+        return context.service<WorkLogService>().getIdsOfWorkLogsModified(unixTime)
     }
 
     fun getWorkLogs(ids: IntArray): Observable<List<WorkLog>> {
