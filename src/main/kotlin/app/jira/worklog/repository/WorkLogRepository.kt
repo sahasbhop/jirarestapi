@@ -2,6 +2,7 @@ package app.jira.worklog.repository
 
 import app.ApplicationContext
 import app.jira.util.Ids
+import app.jira.worklog.model.IssueWorkLog
 import app.jira.worklog.model.UpdatedWorkLogList
 import app.jira.worklog.model.WorkLog
 import app.jira.worklog.service.WorkLogService
@@ -18,5 +19,9 @@ class WorkLogRepository(private val context: ApplicationContext) {
 
     fun getWorkLogs(ids: IntArray): Observable<List<WorkLog>> {
         return context.service<WorkLogService>().getWorkLogs(Ids(ids))
+    }
+
+    fun getIssueWorkLogs(issueId: String): Observable<IssueWorkLog> {
+        return context.service<WorkLogService>().getIssueWorkLogs(issueId)
     }
 }
