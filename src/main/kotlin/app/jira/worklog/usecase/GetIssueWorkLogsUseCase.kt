@@ -4,25 +4,38 @@ import app.ApplicationContext
 import app.jira.worklog.model.WorkLog
 import app.jira.worklog.repository.WorkLogRepository
 import io.reactivex.Observable
-import java.util.*
+import io.reactivex.schedulers.Schedulers
 
 class GetIssueWorkLogsUseCase(private val context: ApplicationContext) {
 
-    fun execute(issueId: String): Observable<List<WorkLog>> {
-        return WorkLogRepository(context).getIssueWorkLogs(issueId).map { it.worklogs }
-    }
-
     fun execute(issueIds: List<String>): Observable<List<WorkLog>> {
-        return Observable.fromIterable(issueIds)
-                .flatMap { issueId ->
-                    WorkLogRepository(context).getIssueWorkLogs(issueId).map { it.worklogs }
-                }
-                .reduce { t1: List<WorkLog>, t2: List<WorkLog> ->
-                    ArrayList<WorkLog>().apply {
-                        addAll(t1)
-                        addAll(t2)
+        return Observable.create<List<WorkLog>> { observer ->
+            val observables = issueIds.map {
+                WorkLogRepository(context).getIssueWorkLogs(it)
+                        .map { it.worklogs }
+                        .subscribeOn(Schedulers.io())
+            }
+
+            Observable
+                    .zip(observables) {
+                        it
+                                .filter { obj -> obj is List<*> }
+                                .map {
+                                    @Suppress("UNCHECKED_CAST")
+                                    it as List<WorkLog>
+                                }
+                                .reduce { acc, list ->
+                                    ArrayList<WorkLog>().apply {
+                                        addAll(acc)
+                                        addAll(list)
+                                    }
+                                }
+                    }.blockingSubscribe {
+                        observer.onNext(it)
+                        observer.onComplete()
                     }
-                }.toObservable()
+        }
+
 
     }
 }

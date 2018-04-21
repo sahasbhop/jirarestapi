@@ -1,5 +1,6 @@
 package app
 
+import app.jira.issue.model.Issue
 import app.jira.search.model.SearchBetween
 import app.jira.search.model.SearchFrom
 import app.jira.search.model.SearchIssue
@@ -28,13 +29,18 @@ fun main(args: Array<String>) {
 
     LoginUseCase(context).execute()
             .flatMap { SearchIssueUseCase(context).execute("LBC", searchPeriod) }
-            .doOnNext { searchResult -> printSearchIssues(searchResult) }
-            .map { issues -> issues.map { it.id } }
-            .flatMap { issueIds -> GetIssueWorkLogsUseCase(context).execute(issueIds) }
-            .map { workLogs -> workLogsInPeriod(workLogs, searchPeriod) }
-            .map { workLogs -> AuthorWorkLogsMapper.map(workLogs) }
-            .subscribe({
-                printAuthorAndWorkLog(it)
+            // .doOnNext { searchResult -> printSearchIssues(searchResult) }
+            .map { it.associateBy({ it.id }, { Issue(it.id, it.fields.summary) }) }
+            .flatMap { issues ->
+                GetIssueWorkLogsUseCase(context)
+                        .execute(issues.map { (id, _) -> id })
+                        .map { workLogsInPeriod(it, searchPeriod) }
+                        .map { AuthorWorkLogsMapper.map(it) }
+                        .map { list -> list to issues }
+
+            }
+            .subscribe({ (authorWorkLogs, issues) ->
+                printAuthorAndWorkLog(authorWorkLogs, issues)
             }, { error ->
                 println("onError - ${error.message}")
             })
@@ -62,13 +68,15 @@ private fun printSearchIssues(it: List<SearchIssue>) {
     }
 }
 
-private fun printAuthorAndWorkLog(authorWorkLogsMap: Map<String, List<WorkLog>>) {
+private fun printAuthorAndWorkLog(authorWorkLogsMap: Map<String, List<WorkLog>>, issues: Map<String, Issue>? = emptyMap()) {
     authorWorkLogsMap.forEach { author, workLogList ->
         println("\n$author")
 
         workLogList.forEach {
+            val issueId = it.issueId
+            val issueSummary = issues?.get(issueId)?.summary ?: issueId
             val timestamp = it.updated.jiraDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-            println("\t$timestamp\tspent${it.timeSpent.width(6)}\ton issue: ${it.issueId}")
+            println("\t$timestamp\tspent${it.timeSpent.width(6)}\ton issue: $issueSummary")
         }
     }
 }
