@@ -15,25 +15,23 @@ class GetIssueWorkLogsUseCase(private val context: ApplicationContext) {
                         .map { it.worklogs }
                         .subscribeOn(Schedulers.io())
             }
-
-            Observable
-                    .zip(observables) {
-                        it
-                                .filter { obj -> obj is List<*> }
-                                .map {
-                                    @Suppress("UNCHECKED_CAST")
-                                    it as List<WorkLog>
-                                }
-                                .reduce { acc, list ->
-                                    ArrayList<WorkLog>().apply {
-                                        addAll(acc)
-                                        addAll(list)
-                                    }
-                                }
-                    }.blockingSubscribe {
-                        observer.onNext(it)
-                        observer.onComplete()
-                    }
+            Observable.zip(observables) {
+                it
+                        .filter { obj -> obj is List<*> }
+                        .map {
+                            @Suppress("UNCHECKED_CAST")
+                            it as List<WorkLog>
+                        }
+                        .reduce { acc, list ->
+                            ArrayList<WorkLog>().apply {
+                                addAll(acc)
+                                addAll(list)
+                            }
+                        }
+            }.blockingSubscribe {
+                observer.onNext(it)
+                observer.onComplete()
+            }
         }
 
 
