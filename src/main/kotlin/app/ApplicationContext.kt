@@ -4,8 +4,6 @@ import app.jira.search.model.SearchBetween
 import app.jira.search.model.SearchFrom
 import app.jira.search.model.SearchPeriod
 import com.esotericsoftware.yamlbeans.YamlReader
-import com.sun.org.apache.xpath.internal.operations.Bool
-import com.sun.tools.corba.se.idl.constExpr.BooleanOr
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
