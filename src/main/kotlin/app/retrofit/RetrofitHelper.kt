@@ -18,7 +18,11 @@ object RetrofitHelper {
         val httpLoggingInterceptor = HttpLoggingInterceptor({ message ->
             println(message)
         }).apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+            level = if (context.debug) {
+                HttpLoggingInterceptor.Level.BASIC
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
 
         // credit - https://allegro.tech/2016/04/meet-retrofit2.html
@@ -27,7 +31,7 @@ object RetrofitHelper {
         return OkHttpClient.Builder()
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(AddCookiesInterceptor())
-                .addInterceptor(ReceivedCookiesInterceptor())
+                .addInterceptor(ReceivedCookiesInterceptor(context))
                 .addInterceptor(basicAuthenticationInterceptor(context))
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)

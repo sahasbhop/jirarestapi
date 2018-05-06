@@ -15,24 +15,28 @@ fun main(args: Array<String>) {
     val searchPeriod: SearchPeriod = context.searchPeriod()
 
     println("""
-        project name: ${context.projectName}
-        searchPeriod: $searchPeriod
+        [main] Project Name: ${context.projectName}
+        [main] Search Period: $searchPeriod
         """.trimIndent()
     )
 
     LoginUseCase(context).execute()
-            .flatMap { SearchIssueUseCase(context).execute(projectName, searchPeriod) }
-            .map { it.associateBy({ it.id }, { Issue(it.id, it.fields.summary) }) }
+            .flatMap {
+                SearchIssueUseCase(context).execute(projectName, searchPeriod)
+            }
+            .map { issues ->
+                issues.associateBy({ issue -> issue.id }, { Issue(it.id, it.fields.summary) })
+            }
             .flatMap { issues ->
                 GetIssueWorkLogsUseCase(context)
                         .execute(issues.map { (id, _) -> id })
                         .map { workLogList -> WorkLogsMapper.workLogsInPeriod(workLogList, searchPeriod) }
                         .map { workLogList -> WorkLogsMapper.authorsWorkLogsMap(workLogList, issues) }
-
             }
-            .subscribe({ it ->
-                AuthorsWorkLogView.show(it)
+            .subscribe({ viewModelList ->
+                AuthorsWorkLogView.show(context, viewModelList)
             }, { error ->
-                println("onError - ${error.message}")
+                println("[main] Error !!")
+                error.printStackTrace()
             })
 }

@@ -1,6 +1,10 @@
 url: https://jira.easy2easiest.com
 username: undefined
 password: undefined
-projectName: undefined
-searchPeriodFrom: 2018-04-25
-searchPeriodTo: undefined
+projectName: LBC
+searchPeriodFrom: 2018-04-09
+searchPeriodTo: 2018-04-20
+maxConcurrentRequest: 10
+numberOfWorkingDays: 7
+numberOfWorkingPerson: 18
+debug: false
