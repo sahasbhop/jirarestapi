@@ -25,8 +25,8 @@ class SearchIssueUseCase(private val context: ApplicationContext) {
         val builder = StringBuilder("project = $project")
 
         when (period) {
-            is SearchFrom -> builder.append(" and updated >= ${period.from.format(formatter)}")
-            is SearchBetween -> builder.append(" and updated >= ${period.from.format(formatter)} and updated <= ${period.to.format(formatter)}")
+            is SearchFrom -> builder.append(" and worklogDate >= ${period.from.format(formatter)}")
+            is SearchBetween -> builder.append(" and worklogDate >= ${period.from.format(formatter)} and worklogDate <= ${period.to.format(formatter)}")
         }
         return builder.toString()
     }

@@ -18,7 +18,7 @@ object WorkLogsMapper {
                 .groupBy { it.updateAuthor.name }
                 .map { (authorName, authorsWorkLogList) ->
                     val dailyWorksLogList = authorsWorkLogList
-                            .groupBy { it.updated.jiraDateTime().toLocalDate() }
+                            .groupBy { it.started.jiraDateTime().toLocalDate() }
                             .map { (date, workLogList) ->
                                 val workLogInDateList = workLogList.map {
                                     val issue = issues[it.issueId]
@@ -34,7 +34,7 @@ object WorkLogsMapper {
 
     fun workLogsInPeriod(workLogs: List<WorkLog>, searchPeriod: SearchPeriod): List<WorkLog> {
         return workLogs.filter {
-            val updated = it.updated.jiraDateTime()
+            val updated = it.started.jiraDateTime()
             when (searchPeriod) {
                 is SearchFrom -> {
                     updated.isAfter(searchPeriod.from.atZeroHours().inBangkok())
